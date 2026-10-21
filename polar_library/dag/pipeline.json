@@ -1,0 +1,132 @@
+{
+    "nodes": [
+        {
+            "id": "read_south",
+            "operation": {"name": "read_csv"},
+            "input_ports": [],
+            "output_ports": [{"id": "read_south_out", "ordinal": 0}],
+            "parameters": {"filepath": "data/orders_south_2018.csv"}
+        },
+        {
+            "id": "read_central",
+            "operation": {"name": "read_csv"},
+            "input_ports": [],
+            "output_ports": [{"id": "read_central_out", "ordinal": 0}],
+            "parameters": {"filepath": "data/Orders_Central.csv"}
+        },
+        {
+            "id": "join_orders",
+            "operation": {"name": "inner_join"},
+            "input_ports": [
+                {"id": "join_orders_left", "ordinal": 0},
+                {"id": "join_orders_right", "ordinal": 1}
+            ],
+            "output_ports": [{"id": "join_orders_out", "ordinal": 0}],
+            "parameters": {
+                "left_on": "Customer ID",
+                "right_on": "Customer ID",
+                "suffixes": ["_south", "_central"]
+            }
+        },
+        {
+            "id": "sort_sales",
+            "operation": {"name": "sort"},
+            "input_ports": [{"id": "sort_sales_in", "ordinal": 0}],
+            "output_ports": [{"id": "sort_sales_out", "ordinal": 0}],
+            "parameters": {"column": "Sales_south", "direction": "desc"}
+        },
+        {
+            "id": "drop_discount",
+            "operation": {"name": "drop-column"},
+            "input_ports": [{"id": "drop_discount_in", "ordinal": 0}],
+            "output_ports": [{"id": "drop_discount_out", "ordinal": 0}],
+            "parameters": {"column": "Discount"}
+        },
+        {
+            "id": "rename_profit",
+            "operation": {"name": "rename-column"},
+            "input_ports": [{"id": "rename_profit_in", "ordinal": 0}],
+            "output_ports": [{"id": "rename_profit_out", "ordinal": 0}],
+            "parameters": {"column": "Profit_south", "new_name": "Profit Margin"}
+        },
+        {
+            "id": "type_postal_code",
+            "operation": {"name": "change-data-type"},
+            "input_ports": [{"id": "type_postal_code_in", "ordinal": 0}],
+            "output_ports": [{"id": "type_postal_code_out", "ordinal": 0}],
+            "parameters": {"column": "Postal Code_south", "new_type": "string"}
+        },
+        {
+            "id": "add_source",
+            "operation": {"name": "add_column"},
+            "input_ports": [{"id": "add_source_in", "ordinal": 0}],
+            "output_ports": [{"id": "add_source_out", "ordinal": 0}],
+            "parameters": {"column_name": "source", "value": "south_central_join"}
+        },
+        {
+            "id": "write_output",
+            "operation": {"name": "write_csv"},
+            "input_ports": [{"id": "write_output_in", "ordinal": 0}],
+            "output_ports": [],
+            "parameters": {"filepath": "output/processed_orders.csv"}
+        }
+    ],
+    "edges": [
+        {
+            "id": "south_to_join",
+            "source_node_id": "read_south",
+            "target_node_id": "join_orders",
+            "source_output_port_id": "read_south_out",
+            "target_input_port_id": "join_orders_left"
+        },
+        {
+            "id": "central_to_join",
+            "source_node_id": "read_central",
+            "target_node_id": "join_orders",
+            "source_output_port_id": "read_central_out",
+            "target_input_port_id": "join_orders_right"
+        },
+        {
+            "id": "join_to_sort_sales",
+            "source_node_id": "join_orders",
+            "target_node_id": "sort_sales",
+            "source_output_port_id": "join_orders_out",
+            "target_input_port_id": "sort_sales_in"
+        },
+        {
+            "id": "sort_sales_to_drop_discount",
+            "source_node_id": "sort_sales",
+            "target_node_id": "drop_discount",
+            "source_output_port_id": "sort_sales_out",
+            "target_input_port_id": "drop_discount_in"
+        },
+        {
+            "id": "drop_discount_to_rename_profit",
+            "source_node_id": "drop_discount",
+            "target_node_id": "rename_profit",
+            "source_output_port_id": "drop_discount_out",
+            "target_input_port_id": "rename_profit_in"
+        },
+        {
+            "id": "rename_profit_to_type_postal_code",
+            "source_node_id": "rename_profit",
+            "target_node_id": "type_postal_code",
+            "source_output_port_id": "rename_profit_out",
+            "target_input_port_id": "type_postal_code_in"
+        },
+        {
+            "id": "type_postal_code_to_add_source",
+            "source_node_id": "type_postal_code",
+            "target_node_id": "add_source",
+            "source_output_port_id": "type_postal_code_out",
+            "target_input_port_id": "add_source_in"
+        },
+        {
+            "id": "source_to_output",
+            "source_node_id": "add_source",
+            "target_node_id": "write_output",
+            "source_output_port_id": "add_source_out",
+            "target_input_port_id": "write_output_in"
+        }
+    ]
+}

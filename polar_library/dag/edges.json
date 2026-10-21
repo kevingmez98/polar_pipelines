@@ -1,0 +1,71 @@
+{
+    "success": true,
+    "message": "Pipeline current version edges retrieved successfully.",
+    "code": "PIPELINE_EDGES_LIST_RETRIEVED",
+    "data": [
+        {
+            "id": "c24f1559-0578-4741-ab2f-30bf3c6eb35c",
+            "created_at": "2026-10-13T13:52:14.751376Z",
+            "edited_at": "2026-10-13T13:52:14.751376Z",
+            "is_deleted": false,
+            "deleted_at": null,
+            "creator_user_id": "8f10adb6-8f9f-4c57-b318-a4f0a867b098",
+            "last_editor_user_id": "8f10adb6-8f9f-4c57-b318-a4f0a867b098",
+            "organization_id": "33ba0c63-4799-41ca-a4eb-8bc53abad953",
+            "version_id": "b584211f-3556-4b3b-a01e-fe3a03ccf87f",
+            "source_node_id": "b6c84e8c-1115-45c4-a561-44acff99e138",
+            "target_node_id": "5bf00f4b-a830-4b0f-9211-533488c671c2",
+            "source_output_port_id": "8400a5d7-8a34-429b-83f1-66d7a6f5ed94",
+            "target_input_port_id": "e281e872-1e9c-4ff5-8ce1-997c629c5b01",
+            "description": "Hola"
+        },
+        {
+            "id": "5cf155fd-219a-4942-8b78-94f30772921a",
+            "created_at": "2026-10-13T13:52:14.751376Z",
+            "edited_at": "2026-10-13T13:52:14.751376Z",
+            "is_deleted": false,
+            "deleted_at": null,
+            "creator_user_id": "8f10adb6-8f9f-4c57-b318-a4f0a867b098",
+            "last_editor_user_id": "8f10adb6-8f9f-4c57-b318-a4f0a867b098",
+            "organization_id": "33ba0c63-4799-41ca-a4eb-8bc53abad953",
+            "version_id": "b584211f-3556-4b3b-a01e-fe3a03ccf87f",
+            "source_node_id": "5bf00f4b-a830-4b0f-9211-533488c671c2",
+            "target_node_id": "8d2a0a01-39e2-48bb-baa1-c446baac2a03",
+            "source_output_port_id": "a21e266d-af1c-471a-8ce6-c1a6a18d246c",
+            "target_input_port_id": "9785a245-911c-4750-b3db-e81932509483",
+            "description": ""
+        },
+        {
+            "id": "f3c113f2-9b15-4fbf-afcc-a5c0f052d508",
+            "created_at": "2026-10-13T13:52:14.751376Z",
+            "edited_at": "2026-10-13T13:52:14.751376Z",
+            "is_deleted": false,
+            "deleted_at": null,
+            "creator_user_id": "8f10adb6-8f9f-4c57-b318-a4f0a867b098",
+            "last_editor_user_id": "8f10adb6-8f9f-4c57-b318-a4f0a867b098",
+            "organization_id": "33ba0c63-4799-41ca-a4eb-8bc53abad953",
+            "version_id": "b584211f-3556-4b3b-a01e-fe3a03ccf87f",
+            "source_node_id": "8d2a0a01-39e2-48bb-baa1-c446baac2a03",
+            "target_node_id": "3f30df11-7ae5-4ed1-b006-73b7de6dbc45",
+            "source_output_port_id": "947152bd-005a-4d6d-9202-deef38e9e6b7",
+            "target_input_port_id": "57733a81-bda8-43f8-9cd2-8f73c2d59157",
+            "description": ""
+        },
+        {
+            "id": "67417ae3-08d7-4849-b91e-8ad0623eb8a0",
+            "created_at": "2026-10-20T14:49:57.568819Z",
+            "edited_at": "2026-10-20T14:49:57.568819Z",
+            "is_deleted": false,
+            "deleted_at": null,
+            "creator_user_id": "8f10adb6-8f9f-4c57-b318-a4f0a867b098",
+            "last_editor_user_id": "8f10adb6-8f9f-4c57-b318-a4f0a867b098",
+            "organization_id": "33ba0c63-4799-41ca-a4eb-8bc53abad953",
+            "version_id": "b584211f-3556-4b3b-a01e-fe3a03ccf87f",
+            "source_node_id": "5bf00f4b-a830-4b0f-9211-533488c671c2",
+            "target_node_id": "a8a67b9d-e5a3-4d45-a9cf-c5624a8363e5",
+            "source_output_port_id": "a21e266d-af1c-471a-8ce6-c1a6a18d246c",
+            "target_input_port_id": "de15a903-3454-449d-8a78-eb144a05e9a8",
+            "description": ""
+        }
+    ]
+}

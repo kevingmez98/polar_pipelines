@@ -1,0 +1,214 @@
+{
+    "success": true,
+    "message": "Operation retrieved successfully.",
+    "code": "OPERATION_RETRIEVED",
+    "data": [
+        {
+            "id": "a41e3632-2549-49ea-b252-3b9e97b7b759",
+            "created_at": "2026-08-27T16:09:17.612161Z",
+            "edited_at": "2026-08-27T16:09:17.612161Z",
+            "is_deleted": false,
+            "deleted_at": null,
+            "creator_user_id": "8f10adb6-8f9f-4c57-b318-a4f0a867b098",
+            "last_editor_user_id": "8f10adb6-8f9f-4c57-b318-a4f0a867b098",
+            "organization_id": "33ba0c63-4799-41ca-a4eb-8bc53abad953",
+            "name": "inner_join",
+            "description": "Unir conjuntos de datos conservando solo coincidencias",
+            "operation_category_id": "d74f874d-af66-4fc3-abe8-1bf5d9fbccbb",
+            "operation_template_id": "d61a03ae-3990-4a3a-abc1-2d8a22aca743",
+            "input_ports": [
+                {
+                    "id": "2fc68950-947b-4a58-9746-bf50b3659374",
+                    "created_at": "2026-08-27T16:09:17.612161Z",
+                    "edited_at": "2026-08-27T16:09:17.612161Z",
+                    "is_deleted": false,
+                    "deleted_at": null,
+                    "creator_user_id": "8f10adb6-8f9f-4c57-b318-a4f0a867b098",
+                    "last_editor_user_id": "8f10adb6-8f9f-4c57-b318-a4f0a867b098",
+                    "operation_id": "a41e3632-2549-49ea-b252-3b9e97b7b759",
+                    "required": true,
+                    "ordinal": 0,
+                    "position": "left",
+                    "max_connections": 1,
+                    "description": "Left-side dataset"
+                },
+                {
+                    "id": "f6ed4a4c-1dc3-46c6-93e1-f7e6979a078d",
+                    "created_at": "2026-08-27T16:09:17.612161Z",
+                    "edited_at": "2026-08-27T16:09:17.612161Z",
+                    "is_deleted": false,
+                    "deleted_at": null,
+                    "creator_user_id": "8f10adb6-8f9f-4c57-b318-a4f0a867b098",
+                    "last_editor_user_id": "8f10adb6-8f9f-4c57-b318-a4f0a867b098",
+                    "operation_id": "a41e3632-2549-49ea-b252-3b9e97b7b759",
+                    "required": true,
+                    "ordinal": 1,
+                    "position": "left",
+                    "max_connections": 1,
+                    "description": "Right-side dataset"
+                }
+            ],
+            "output_ports": [
+                {
+                    "id": "3cfbfa02-ebce-4e77-a735-fbf8e7f57468",
+                    "created_at": "2026-08-27T16:09:17.612161Z",
+                    "edited_at": "2026-08-27T16:09:17.612161Z",
+                    "is_deleted": false,
+                    "deleted_at": null,
+                    "creator_user_id": "8f10adb6-8f9f-4c57-b318-a4f0a867b098",
+                    "last_editor_user_id": "8f10adb6-8f9f-4c57-b318-a4f0a867b098",
+                    "operation_id": "a41e3632-2549-49ea-b252-3b9e97b7b759",
+                    "ordinal": 0,
+                    "position": "right",
+                    "max_connections": 2147483647,
+                    "description": "Joined dataset"
+                }
+            ],
+            "parameters": []
+        },
+        {
+            "id": "189e6b1a-d490-409b-979f-74dd488b6af9",
+            "created_at": "2026-08-27T16:28:31.290593Z",
+            "edited_at": "2026-08-27T16:28:31.290593Z",
+            "is_deleted": false,
+            "deleted_at": null,
+            "creator_user_id": "8f10adb6-8f9f-4c57-b318-a4f0a867b098",
+            "last_editor_user_id": "8f10adb6-8f9f-4c57-b318-a4f0a867b098",
+            "organization_id": "33ba0c63-4799-41ca-a4eb-8bc53abad953",
+            "name": "limit",
+            "description": "Limitar el número de filas del resultado",
+            "operation_category_id": "4122d917-4bda-492e-843c-6bd99c065e5a",
+            "operation_template_id": "0d63c6b0-47dd-4197-9390-5ade0abe87ad",
+            "input_ports": [
+                {
+                    "id": "0e60fa34-50e3-4c91-bf87-d4b36e472dd7",
+                    "created_at": "2026-08-27T16:28:31.290593Z",
+                    "edited_at": "2026-08-27T16:28:31.290593Z",
+                    "is_deleted": false,
+                    "deleted_at": null,
+                    "creator_user_id": "8f10adb6-8f9f-4c57-b318-a4f0a867b098",
+                    "last_editor_user_id": "8f10adb6-8f9f-4c57-b318-a4f0a867b098",
+                    "operation_id": "189e6b1a-d490-409b-979f-74dd488b6af9",
+                    "required": true,
+                    "ordinal": 0,
+                    "position": "left",
+                    "max_connections": 1,
+                    "description": "Input dataset"
+                }
+            ],
+            "output_ports": [
+                {
+                    "id": "0d227908-2993-4aa4-b2aa-1ab91c796ef7",
+                    "created_at": "2026-08-27T16:28:31.290593Z",
+                    "edited_at": "2026-08-27T16:28:31.290593Z",
+                    "is_deleted": false,
+                    "deleted_at": null,
+                    "creator_user_id": "8f10adb6-8f9f-4c57-b318-a4f0a867b098",
+                    "last_editor_user_id": "8f10adb6-8f9f-4c57-b318-a4f0a867b098",
+                    "operation_id": "189e6b1a-d490-409b-979f-74dd488b6af9",
+                    "ordinal": 0,
+                    "position": "right",
+                    "max_connections": 2147483647,
+                    "description": "Transformed dataset"
+                }
+            ],
+            "parameters": []
+        },
+        {
+            "id": "daf931b3-8aca-48ea-8e74-d2323bd9a272",
+            "created_at": "2026-10-02T20:04:55.453966Z",
+            "edited_at": "2026-10-02T20:04:55.453966Z",
+            "is_deleted": false,
+            "deleted_at": null,
+            "creator_user_id": "8f10adb6-8f9f-4c57-b318-a4f0a867b098",
+            "last_editor_user_id": "8f10adb6-8f9f-4c57-b318-a4f0a867b098",
+            "organization_id": "33ba0c63-4799-41ca-a4eb-8bc53abad953",
+            "name": "avg",
+            "description": "Calcular el promedio de una columna numérica",
+            "operation_category_id": "50b893e5-b491-4136-bac1-0bc0e9338831",
+            "operation_template_id": "cdfc807d-4e93-4429-93db-05fe96891f48",
+            "input_ports": [
+                {
+                    "id": "6b1d24d8-fb19-4fb0-9fa0-d80bf9946123",
+                    "created_at": "2026-10-02T20:04:55.453966Z",
+                    "edited_at": "2026-10-02T20:04:55.453966Z",
+                    "is_deleted": false,
+                    "deleted_at": null,
+                    "creator_user_id": "8f10adb6-8f9f-4c57-b318-a4f0a867b098",
+                    "last_editor_user_id": "8f10adb6-8f9f-4c57-b318-a4f0a867b098",
+                    "operation_id": "daf931b3-8aca-48ea-8e74-d2323bd9a272",
+                    "required": true,
+                    "ordinal": 0,
+                    "position": "left",
+                    "max_connections": 1,
+                    "description": "Input dataset"
+                }
+            ],
+            "output_ports": [
+                {
+                    "id": "4763f314-3ced-4fe1-affc-d7bd27216a14",
+                    "created_at": "2026-10-02T20:04:55.453966Z",
+                    "edited_at": "2026-10-02T20:04:55.453966Z",
+                    "is_deleted": false,
+                    "deleted_at": null,
+                    "creator_user_id": "8f10adb6-8f9f-4c57-b318-a4f0a867b098",
+                    "last_editor_user_id": "8f10adb6-8f9f-4c57-b318-a4f0a867b098",
+                    "operation_id": "daf931b3-8aca-48ea-8e74-d2323bd9a272",
+                    "ordinal": 0,
+                    "position": "right",
+                    "max_connections": 2147483647,
+                    "description": "Transformed dataset"
+                }
+            ],
+            "parameters": []
+        },
+        {
+            "id": "913507bc-5897-4f5e-a864-9a6c54e17665",
+            "created_at": "2026-10-02T20:04:55.453966Z",
+            "edited_at": "2026-10-02T20:04:55.453966Z",
+            "is_deleted": false,
+            "deleted_at": null,
+            "creator_user_id": "8f10adb6-8f9f-4c57-b318-a4f0a867b098",
+            "last_editor_user_id": "8f10adb6-8f9f-4c57-b318-a4f0a867b098",
+            "organization_id": "33ba0c63-4799-41ca-a4eb-8bc53abad953",
+            "name": "min_max",
+            "description": "Obtener los valores mínimo y/o máximo de una columna",
+            "operation_category_id": "50b893e5-b491-4136-bac1-0bc0e9338831",
+            "operation_template_id": "69a87322-7e07-45fc-be52-2272f16b49f6",
+            "input_ports": [
+                {
+                    "id": "5f8d1b01-8ac5-42c4-a433-b895ec92c138",
+                    "created_at": "2026-10-02T20:04:55.453966Z",
+                    "edited_at": "2026-10-02T20:04:55.453966Z",
+                    "is_deleted": false,
+                    "deleted_at": null,
+                    "creator_user_id": "8f10adb6-8f9f-4c57-b318-a4f0a867b098",
+                    "last_editor_user_id": "8f10adb6-8f9f-4c57-b318-a4f0a867b098",
+                    "operation_id": "913507bc-5897-4f5e-a864-9a6c54e17665",
+                    "required": true,
+                    "ordinal": 0,
+                    "position": "left",
+                    "max_connections": 1,
+                    "description": "Input dataset"
+                }
+            ],
+            "output_ports": [
+                {
+                    "id": "390bf5c5-b8b0-47d0-85c5-4fc4c7c4d798",
+                    "created_at": "2026-10-02T20:04:55.453966Z",
+                    "edited_at": "2026-10-02T20:04:55.453966Z",
+                    "is_deleted": false,
+                    "deleted_at": null,
+                    "creator_user_id": "8f10adb6-8f9f-4c57-b318-a4f0a867b098",
+                    "last_editor_user_id": "8f10adb6-8f9f-4c57-b318-a4f0a867b098",
+                    "operation_id": "913507bc-5897-4f5e-a864-9a6c54e17665",
+                    "ordinal": 0,
+                    "position": "right",
+                    "max_connections": 2147483647,
+                    "description": "Transformed dataset"
+                }
+            ],
+            "parameters": []
+        }
+    ]
+}

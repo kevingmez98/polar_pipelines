@@ -1,0 +1,243 @@
+from datetime import datetime
+
+import polars as pl
+
+from ..interfaces.date_interface import IDateProcessor
+
+
+class DateProcessor(IDateProcessor):
+    def _get_target_column(
+        self, column_name: str, replace: bool, new_column_name: str | None
+    ) -> str:
+        target_column = column_name if replace else new_column_name
+        if not target_column:
+            raise ValueError("No 'new_column_name' provided while 'replace' is False.")
+        return target_column
+
+    def date_add(
+        self,
+        df: pl.DataFrame,
+        column_name: str,
+        part: str,
+        interval: int,
+        replace: bool = True,
+        new_column_name: str | None = None,
+    ) -> pl.DataFrame:
+        target_column = self._get_target_column(column_name, replace, new_column_name)
+
+        # Map structural parts to Polars offset strings
+        part_mapping = {"year": "y", "month": "mo", "week": "w", "day": "d"}
+        p = part_mapping.get(part.lower())
+        if not p:
+            raise ValueError(
+                f"Unsupported part '{part}'. Choose from year, month, week, day."
+            )
+
+        offset_str = f"{interval}{p}"
+        return df.with_columns(
+            pl.col(column_name).dt.offset_by(offset_str).alias(target_column)
+        )
+
+    def date_diff(
+        self,
+        df: pl.DataFrame,
+        column_name_a: str,
+        column_name_b: str,
+        part: str,
+        new_column_name: str,
+    ) -> pl.DataFrame:
+        # Computes column_b - column_a
+        diff_expr = pl.col(column_name_b) - pl.col(column_name_a)
+
+        if part.lower() in ["day", "days"]:
+            expr = diff_expr.dt.total_days()
+        elif part.lower() in ["week", "weeks"]:
+            expr = diff_expr.dt.total_days() // 7
+        elif part.lower() in ["month", "months"]:
+            # Calculating via year and month diff
+            expr = (
+                pl.col(column_name_b).dt.year() - pl.col(column_name_a).dt.year()
+            ) * 12 + (
+                pl.col(column_name_b).dt.month() - pl.col(column_name_a).dt.month()
+            )
+        elif part.lower() in ["year", "years"]:
+            expr = pl.col(column_name_b).dt.year() - pl.col(column_name_a).dt.year()
+        else:
+            raise ValueError(f"Unsupported diff part '{part}'")
+
+        return df.with_columns(expr.alias(new_column_name))
+
+    def date_name(
+        self,
+        df: pl.DataFrame,
+        column_name: str,
+        format: str,
+        replace: bool = True,
+        new_column_name: str | None = None,
+    ) -> pl.DataFrame:
+        # Converts date to string format
+        target_column = self._get_target_column(column_name, replace, new_column_name)
+        return df.with_columns(
+            pl.col(column_name).dt.strftime(format).alias(target_column)
+        )
+
+    def date_parse(
+        self,
+        df: pl.DataFrame,
+        column_name: str,
+        format: str,
+        replace: bool = True,
+        new_column_name: str | None = None,
+    ) -> pl.DataFrame:
+        # Parses a string column back into a Date/Datetime
+        target_column = self._get_target_column(column_name, replace, new_column_name)
+        return df.with_columns(
+            pl.col(column_name).str.to_datetime(format=format).alias(target_column)
+        )
+
+    def date_trunc(
+        self,
+        df: pl.DataFrame,
+        column_name: str,
+        part: str,
+        replace: bool = True,
+        new_column_name: str | None = None,
+    ) -> pl.DataFrame:
+        # Rounds date down to the beginning of the specified part
+        target_column = self._get_target_column(column_name, replace, new_column_name)
+        part_mapping = {"year": "1y", "month": "1mo", "week": "1w", "day": "1d"}
+        p = part_mapping.get(part.lower())
+        if not p:
+            raise ValueError(f"Unsupported truncation part '{part}'")
+
+        return df.with_columns(pl.col(column_name).dt.truncate(p).alias(target_column))
+
+    def day(
+        self,
+        df: pl.DataFrame,
+        column_name: str,
+        replace: bool = True,
+        new_column_name: str | None = None,
+    ) -> pl.DataFrame:
+        target_column = self._get_target_column(column_name, replace, new_column_name)
+        return df.with_columns(pl.col(column_name).dt.day().alias(target_column))
+
+    def iso_quarter(
+        self,
+        df: pl.DataFrame,
+        column_name: str,
+        replace: bool = True,
+        new_column_name: str | None = None,
+    ) -> pl.DataFrame:
+        target_column = self._get_target_column(column_name, replace, new_column_name)
+
+        # Calculate ISO quarter (Q1 to Q4) based on ISO 8601 week (every quarter has 13 weeks).
+        expr = (
+            (
+                (
+                    # dt.week() get ISO week (1 to 53). Minus 1 to index from 0 (0 to 52).
+                    (pl.col(column_name).dt.week() - 1)
+                    # Divide in 13 to group the weeks in quarters (0,1,2,3)
+                    // 13
+                )
+                # Add 1 to get back to 1 to 4 quarters
+                + 1
+            )
+            # .clip(max=4) to week 53 (In leap years ISO) stays in Q4.
+            .clip(max=4)
+            .cast(pl.Int8)
+        )  # Convert to an integer
+
+        return df.with_columns(expr.alias(target_column))
+
+    def iso_week(
+        self,
+        df: pl.DataFrame,
+        column_name: str,
+        replace: bool = True,
+        new_column_name: str | None = None,
+    ) -> pl.DataFrame:
+        target_column = self._get_target_column(column_name, replace, new_column_name)
+        expr = pl.col(column_name).dt.week().cast(pl.Int8)
+        return df.with_columns(expr.alias(target_column))
+
+    def iso_week_day(
+        self,
+        df: pl.DataFrame,
+        column_name: str,
+        replace: bool = True,
+        new_column_name: str | None = None,
+    ) -> pl.DataFrame:
+        target_column = self._get_target_column(column_name, replace, new_column_name)
+        expr = pl.col(column_name).dt.weekday().cast(pl.Int8)
+    
+        return df.with_columns(expr.alias(target_column))
+
+    def iso_year(
+        self,
+        df: pl.DataFrame,
+        column_name: str,
+        replace: bool = True,
+        new_column_name: str | None = None,
+    ) -> pl.DataFrame:
+        target_column = self._get_target_column(column_name, replace, new_column_name)
+       
+        expr = pl.col(column_name).dt.iso_year().cast(pl.Int32)
+    
+        return df.with_columns(expr.alias(target_column))
+
+    def month(
+        self,
+        df: pl.DataFrame,
+        column_name: str,
+        replace: bool = True,
+        new_column_name: str | None = None,
+    ) -> pl.DataFrame:
+        target_column = self._get_target_column(column_name, replace, new_column_name)
+        return df.with_columns(pl.col(column_name).dt.month().alias(target_column))
+
+    def now(
+        self,
+        df: pl.DataFrame,
+        new_column_name: str,
+    ) -> pl.DataFrame:
+        # Appends a column filled with the current system Datetime
+        return df.with_columns(pl.lit(datetime.now()).alias(new_column_name))
+
+    def quarter(
+        self,
+        df: pl.DataFrame,
+        column_name: str,
+        replace: bool = True,
+        new_column_name: str | None = None,
+    ) -> pl.DataFrame:
+        target_column = self._get_target_column(column_name, replace, new_column_name)
+        return df.with_columns(pl.col(column_name).dt.quarter().alias(target_column))
+
+    def today(
+        self,
+        df: pl.DataFrame,
+        new_column_name: str,
+    ) -> pl.DataFrame:
+        # Appends a column filled with the current system Date (no time component)
+        return df.with_columns(pl.lit(datetime.now().date()).alias(new_column_name))
+
+    def week(
+        self,
+        df: pl.DataFrame,
+        column_name: str,
+        replace: bool = True,
+        new_column_name: str | None = None,
+    ) -> pl.DataFrame:
+        target_column = self._get_target_column(column_name, replace, new_column_name)
+        return df.with_columns(pl.col(column_name).dt.week().alias(target_column))
+
+    def year(
+        self,
+        df: pl.DataFrame,
+        column_name: str,
+        replace: bool = True,
+        new_column_name: str | None = None,
+    ) -> pl.DataFrame:
+        target_column = self._get_target_column(column_name, replace, new_column_name)
+        return df.with_columns(pl.col(column_name).dt.year().alias(target_column))

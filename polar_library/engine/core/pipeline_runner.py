@@ -5,8 +5,9 @@ from pathlib import Path
 from typing import Any
 
 import polars as pl
-from polar_library.engine.core.pipeline_graph import collect_nodes, topological_order
+
 from polar_library.engine.core.operation_registry import execute_operation
+from polar_library.engine.core.pipeline_graph import collect_nodes, topological_order
 
 
 class PipelineRunner:

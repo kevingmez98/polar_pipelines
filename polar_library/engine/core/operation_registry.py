@@ -6,15 +6,15 @@ from typing import Any
 
 import polars as pl
 
-from polar_library.engine.processors.conversion_processor import ConversionProcessor
-from polar_library.engine.processors.date_processor import DateTimeProcessor
+from polar_library.engine.processors import conversion_processor as ConversionProcessor
+from polar_library.engine.processors import date_processor as DateTimeProcessor
+from polar_library.engine.processors import io_processor as IOProcessor
+from polar_library.engine.processors import logical_processor as LogicalProcessor
+from polar_library.engine.processors import numeric_processor as NumericProcessor
+from polar_library.engine.processors import row_processor as RowProcessor
+from polar_library.engine.processors import structural_processor as StructuralProcessor
+from polar_library.engine.processors import text_processor as TextProcessor
 from polar_library.engine.processors.inputs import require_inputs
-from polar_library.engine.processors.io_processor import IOProcessor
-from polar_library.engine.processors.logical_processor import LogicalProcessor
-from polar_library.engine.processors.numeric_processor import NumericProcessor
-from polar_library.engine.processors.row_processor import RowProcessor
-from polar_library.engine.processors.structural_processor import StructuralProcessor
-from polar_library.engine.processors.text_processor import TextProcessor
 
 Operation = Callable[..., pl.DataFrame]
 

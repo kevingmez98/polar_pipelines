@@ -1,13 +1,9 @@
 import polars as pl
 
-from polar_library.engine.processors.structural_processor import StructuralProcessor
-
-from ..interfaces.numeric_interface import INumericProcessor
+from polar_library.engine.processors import structural_processor as StructuralProcessor
 
 
-class NumericProcessor(INumericProcessor):
-
-    def clean_float(
+def clean_float(
         
         df: pl.DataFrame,
         column_name: str,
@@ -28,7 +24,7 @@ class NumericProcessor(INumericProcessor):
             .alias(target_column)
         )
 
-    def absolute(
+def absolute(
         df: pl.DataFrame,
         column: str,
         create_new_column: bool = True,
@@ -44,7 +40,7 @@ class NumericProcessor(INumericProcessor):
             pl.col(column).abs().alias(target_column)  # create_new_column original column
         )
 
-    def ceiling(
+def ceiling(
         
         df: pl.DataFrame,
         column_name: str,
@@ -60,7 +56,7 @@ class NumericProcessor(INumericProcessor):
             pl.col(column_name).ceil().alias(target_column)  # create_new_column original column
         )
 
-    def floor(
+def floor(
         
         df: pl.DataFrame,
         column_name: str,
@@ -75,7 +71,7 @@ class NumericProcessor(INumericProcessor):
 
         return df.with_columns(pl.col(column_name).floor().alias(target_column))
 
-    def max(
+def max(
         
         df: pl.DataFrame,
         column_a: str,
@@ -91,7 +87,7 @@ class NumericProcessor(INumericProcessor):
             pl.max_horizontal(column_a, column_b).alias(new_column_name)
         )
 
-    def min(
+def min(
         
         df: pl.DataFrame,
         column_a: str,
@@ -107,7 +103,7 @@ class NumericProcessor(INumericProcessor):
             pl.min_horizontal(column_a, column_b).alias(new_column_name)
         )
 
-    def power(
+def power(
         
         df: pl.DataFrame,
         column_name: str,
@@ -127,7 +123,7 @@ class NumericProcessor(INumericProcessor):
             pl.col(column_name).pow(value).alias(target_column)
         )
 
-    def round_column(
+def round_column(
         
         df: pl.DataFrame,
         column_name: str,
@@ -146,7 +142,7 @@ class NumericProcessor(INumericProcessor):
             pl.col(column_name).round(decimals).alias(target_column)
         )
     
-    def arithmetic(
+def arithmetic(
 		df: pl.DataFrame, column_a: str, operator: str, column_b_or_value: str | float,
 		create_new_column: bool = False, new_column_name: str | None = None,
 	) -> pl.DataFrame:

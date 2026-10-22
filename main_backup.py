@@ -1,7 +1,8 @@
 import json
 
-from polar_library.engine.core import PolarDataProcessor
 from polar_library.engine.core.dag_cleaner import merge_pipeline_clean
+
+from polar_library.engine.core import PolarDataProcessor
 
 processor = PolarDataProcessor()
 

@@ -17,6 +17,17 @@ class ITextProcessor(ABC):
         """ concat at the end of the column the value """
 
     @abstractmethod
+    def concat_text(
+        self,
+        df: pl.DataFrame,
+        column_name: str,
+        value: str,
+        replace: bool = True,
+        new_column_name: str | None = None,
+    ) -> pl.DataFrame:
+        """ concat at the end of the column the value """
+
+    @abstractmethod
     def contains(
         self,
         df: pl.DataFrame,
@@ -60,7 +71,7 @@ class ITextProcessor(ABC):
         """ Get the length of the string value with empty spaces and create a new column or replaces the old one """
 
     @abstractmethod
-    def lower(
+    def lowercase(
         self,
         df: pl.DataFrame,
         column_name: str,
@@ -158,7 +169,7 @@ class ITextProcessor(ABC):
 
 
     @abstractmethod
-    def upper(
+    def uppercase(
         self,
         df: pl.DataFrame,
         column_name: str,

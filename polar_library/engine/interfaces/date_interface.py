@@ -4,7 +4,7 @@ from datetime import datetime
 import polars as pl
 
 
-class DateCategoryInterface(ABC):
+class IDateTimeInterface(ABC):
 
     @abstractmethod
     def date_add(
@@ -17,6 +17,18 @@ class DateCategoryInterface(ABC):
         new_column_name: str | None = None,
     ) -> pl.DataFrame:
         """Create or replace a column adding a part of a date into the column data, the interval is the amount of parts added"""
+    
+    @abstractmethod
+    def date_sub(
+        self,
+        df: pl.DataFrame,
+        column_name: str,
+        part: str,
+        interval: int,
+        replace: bool = True,
+        new_column_name: str | None = None,
+    ) -> pl.DataFrame:
+        """Create or replace a column minus a part of a date into the column data, the interval is the amount of parts added"""
    
     @abstractmethod
     def date_diff(
@@ -40,7 +52,7 @@ class DateCategoryInterface(ABC):
         """Parse the date to another format"""
         
     @abstractmethod
-    def date_parse(
+    def date_parser(
         self,
         df: pl.DataFrame,
         column_name: str,

@@ -5,14 +5,14 @@
             "operation": {"name": "read_csv"},
             "input_ports": [],
             "output_ports": [{"id": "read_south_out", "ordinal": 0}],
-            "parameters": {"filepath": "data/netflix_titles.csv"}
+            "parameters": {"filepath": "polar_library/data/orders_south_2018.csv"}
         },
         {
             "id": "read_central",
             "operation": {"name": "read_csv"},
             "input_ports": [],
             "output_ports": [{"id": "read_central_out", "ordinal": 0}],
-            "parameters": {"filepath": "data/Orders_Central.csv"}
+            "parameters": {"filepath": "polar_library/data/Orders_Central.csv"}
         },
         {
             "id": "join_orders",
@@ -34,9 +34,9 @@
             "input_ports": [{"id": "logical_in", "ordinal": 0}],
             "output_ports": [{"id": "logical_out", "ordinal": 0}],
             "parameters": {
-                "column": "Profit_south",
-                "sentencia1": "Profit_south >= 0",
-                "sentencia2": "Profit_south < 100",
+                "column": "Profit",
+                "sentencia1": "Profit >= 0",
+                "sentencia2": "Profit < 100",
                 "reemplazar_campo": false,
                 "nombre_nueva_columna": "profit_in_range"
             }
@@ -47,7 +47,7 @@
             "input_ports": [{"id": "numeric_in", "ordinal": 0}],
             "output_ports": [{"id": "numeric_out", "ordinal": 0}],
             "parameters": {
-                "column": "Profit_south",
+                "column": "Profit",
                 "create_new_column": true,
                 "new_column_name": "absolute_profit"
             }
@@ -58,7 +58,7 @@
             "input_ports": [{"id": "structural_in", "ordinal": 0}],
             "output_ports": [{"id": "structural_out", "ordinal": 0}],
             "parameters": {
-                "column": "Postal Code_south",
+                "column": "Postal Code",
                 "target_type": "string",
                 "create_new_column": true,
                 "new_column_name": "postal_code_text"
@@ -91,7 +91,7 @@
             "input_ports": [{"id": "text_in", "ordinal": 0}],
             "output_ports": [{"id": "text_out", "ordinal": 0}],
             "parameters": {
-                "column": "Customer Name_south",
+                "column": "Customer Name",
                 "create_new_column": true,
                 "new_column_name": "customer_name_lower"
             }
@@ -115,22 +115,22 @@
             "output_ports": [{"id": "drop_out", "ordinal": 0}],
             "parameters": {
                 "columns": [
-                    "Sales_south",
-                    "Quantity_south",
+                    "Sales",
+                    "Quantity",
                     "Discount",
                     "Region",
-                    "State_south",
-                    "Row ID_south",
-                    "Order ID_south",
+                    "State",
+                    "Row ID",
+                    "Order ID",
                     "Ship Date",
-                    "Ship Mode_south",
+                    "Ship Mode",
                     "Customer ID",
-                    "Segment_south",
-                    "Country_south",
-                    "City_south",
-                    "Product ID_south",
-                    "Category_south",
-                    "Sub-Category_south",
+                    "Segment",
+                    "Country",
+                    "City",
+                    "Product ID",
+                    "Category",
+                    "Sub-Category",
                     "Product Name",
                     "Row ID_central",
                     "Order ID_central",
@@ -164,7 +164,7 @@
             "operation": {"name": "write_csv"},
             "input_ports": [{"id": "write_in", "ordinal": 0}],
             "output_ports": [],
-            "parameters": {"filepath": "output/processed_orders.csv"}
+            "parameters": {"filepath": "output/processed_orders.csv", "index":true}
         }
     ],
     "edges": [

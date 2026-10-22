@@ -5,13 +5,12 @@ from pathlib import Path
 from typing import Any
 
 import polars as pl
-
-from .operation_registry import get_interface
-from .pipeline_graph import collect_nodes, topological_order
+from polar_library.engine.core.pipeline_graph import collect_nodes, topological_order
+from polar_library.engine.core.operation_registry import execute_operation
 
 
 class PipelineRunner:
-	"""Resolve each node's inputs and parameters, then delegate to its facade."""
+	"""Resolve each node's inputs and dispatch to concrete processor methods."""
 
 	def __init__(self, pipeline: Mapping[str, Any], base_dir: str | Path | None = None) -> None:
 		self.nodes = collect_nodes(pipeline)
@@ -35,7 +34,10 @@ class PipelineRunner:
 				continue
 			frame = datasources.get(port["id"])
 			if frame is None:
-				raise ValueError(f"Missing datasource for input port {port['id']!r}")
+				raise ValueError(
+					f"Missing datasource for input port {port['id']!r} "
+					f"on node {node['id']!r}; provide it in datasources[{port['id']!r}]"
+				)
 			frames.append(frame)
 		return frames
 
@@ -47,9 +49,12 @@ class PipelineRunner:
 		"""Merge stored and runtime parameters, resolving relative file paths."""
 		stored = node.get("parameters")
 		resolved = {**(stored if isinstance(stored, Mapping) else {}), **overrides.get(node["id"], {})}
-		filepath = resolved.get("filepath")
-		if self.base_dir is not None and isinstance(filepath, str) and not Path(filepath).is_absolute():
-			resolved["filepath"] = self.base_dir / filepath
+		for key in ("filepath", "filepath_or_connection", "output_path"):
+			if key == "filepath_or_connection" and resolved.get("source_type") == "sql":
+				continue
+			filepath = resolved.get(key)
+			if self.base_dir is not None and isinstance(filepath, (str, Path)) and not Path(filepath).is_absolute():
+				resolved[key] = self.base_dir / filepath
 		return resolved
 
 	def run(
@@ -66,8 +71,9 @@ class PipelineRunner:
 			node = self.nodes[node_id]
 			operation = (node.get("operation") or {}).get("name", "").lower()
 			inputs = self._inputs(node, datasources, results, edges_by_port)
-			interface = get_interface(operation)
-			results[node_id] = interface.execute(operation, inputs, **self._parameters(node, parameters))
+			results[node_id] = execute_operation(
+				operation, inputs, self._parameters(node, parameters),
+			)
 		return results
 
 	@property

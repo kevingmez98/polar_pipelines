@@ -2,10 +2,12 @@ from datetime import datetime
 
 import polars as pl
 
-from ..interfaces.date_interface import IDateProcessor
+from polar_library.engine.processors.structural_processor import StructuralProcessor
+
+from ..interfaces.date_interface import IDateTimeInterface
 
 
-class DateProcessor(IDateProcessor):
+class DateTimeProcessor(IDateTimeInterface):
     def _get_target_column(
         self, column_name: str, replace: bool, new_column_name: str | None
     ) -> str:
@@ -36,6 +38,30 @@ class DateProcessor(IDateProcessor):
         offset_str = f"{interval}{p}"
         return df.with_columns(
             pl.col(column_name).dt.offset_by(offset_str).alias(target_column)
+        )
+
+    def date_sub(
+        self,
+        df: pl.DataFrame,
+        column_name: str,
+        part: str,
+        interval: int,
+        replace: bool = True,
+        new_column_name: str | None = None,
+    ) -> pl.DataFrame:
+        target_column = self._get_target_column(column_name, replace, new_column_name)
+
+        # Map structural parts to Polars offset strings
+        part_mapping = {"year": "y", "month": "mo", "week": "w", "day": "d"}
+        p = part_mapping.get(part.lower())
+        if not p:
+            raise ValueError(
+                f"Unsupported part '{part}'. Choose from year, month, week, day."
+            )
+
+        offset_str = f"{interval}{p}"
+        return df.with_columns(
+            pl.col(column_name).dt.offset_by(-offset_str).alias(target_column)
         )
 
     def date_diff(
@@ -81,7 +107,7 @@ class DateProcessor(IDateProcessor):
             pl.col(column_name).dt.strftime(format).alias(target_column)
         )
 
-    def date_parse(
+    def date_parser(
         self,
         df: pl.DataFrame,
         column_name: str,
@@ -149,6 +175,44 @@ class DateProcessor(IDateProcessor):
         )  # Convert to an integer
 
         return df.with_columns(expr.alias(target_column))
+        
+    def extract_date_part(
+        df: pl.DataFrame,
+        column: str,
+        part: str,
+        create_new_column: bool = False,
+        new_column_name: str | None = None,
+        date_format: str | None = None,  # Permite pasar un formato personalizado
+    ) -> pl.DataFrame:
+        if part not in ("year", "month", "day", "weekday"):
+            raise ValueError("part must be 'year', 'month', 'day' or 'weekday'")
+        
+        target_column = new_column_name if create_new_column and new_column_name else column
+        expr = pl.col(column)
+
+        # If column is text la convert it to Datetime
+        if df[column].dtype == pl.String:
+            if date_format is None:
+                # First value to detect format
+                sample_value = df[column].drop_nulls().first()
+                
+                if sample_value and "/" in sample_value:
+                    # "12/21/2018 0:00" or "12/21/2018" format
+                    date_format = "%m/%d/%Y %H:%M" if ":" in sample_value else "%m/%d/%Y"
+                else:
+                    # Standard ISO
+                    date_format = "%Y-%m-%d %H:%M:%S" if sample_value and ":" in sample_value else "%Y-%m-%d"
+            
+            # Parsing
+            date_expr = expr.str.to_datetime(format=date_format, strict=True)
+        else:
+            # already a date 
+            date_expr = expr
+
+        # Extract
+        part_expr = getattr(date_expr.dt, part)()
+
+        return df.with_columns(part_expr.alias(target_column))
 
     def iso_week(
         self,

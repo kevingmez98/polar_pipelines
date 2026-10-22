@@ -78,7 +78,7 @@ class IStructuralProcessor(ABC):
 		group_by: list[str],
 		aggregations: dict[str, str | list[str]],
 	) -> pl.DataFrame:
-	    """Aggregate with pandas functions, retaining null grouping keys."""
+	    """Aggregate with polar functions, retaining null grouping keys."""
 		
 
     @abstractmethod

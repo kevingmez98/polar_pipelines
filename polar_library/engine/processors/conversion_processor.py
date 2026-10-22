@@ -1,6 +1,7 @@
 import polars as pl
 
-from ..interfaces.conversion_interface import IConversionProcessor
+from polar_library.engine.interfaces.conversion_interface import IConversionProcessor
+from polar_library.engine.processors.structural_processor import StructuralProcessor
 
 
 class ConversionProcessor(IConversionProcessor):
@@ -11,6 +12,87 @@ class ConversionProcessor(IConversionProcessor):
         if not target_column:
             raise ValueError("No 'new_column_name' provided while 'replace' is False.")
         return target_column
+
+    @staticmethod
+    def _assign(
+        df: pl.DataFrame,
+        source: str,
+        values: pl.Series,
+        replace: bool,
+        new_column_name: str | None,
+    ) -> pl.DataFrame:
+        if not isinstance(replace, bool):
+            raise ValueError("replace must be a boolean")
+        if replace and new_column_name is not None:
+            raise ValueError("new_column_name requires replace to be false")
+        if not replace and not new_column_name:
+            raise ValueError("new_column_name is required when replace is false")
+        return StructuralProcessor.assign_result(
+            df,
+            source,
+            values,
+            create_new_column=not replace,
+            new_column_name=new_column_name if not replace else None,
+        )
+    @staticmethod
+    def _integer_parts(df: pl.DataFrame, columns: tuple[str, ...]) -> dict[str, pl.Series]:
+	    parts = {}
+	    for name in columns:
+	    	values = pl.to_numeric(df[name], errors="raise")
+	    	if ((values.dropna() % 1) != 0).any():
+	    		raise ValueError(f"{name} values must be integers")
+	    	parts[name] = values.astype("Int64")
+	    return parts
+
+    @staticmethod
+    def to_date(
+		df: pl.DataFrame,
+		column: str,
+		replace: bool = True,
+		new_column_name: str | None = None,
+	) -> pl.DataFrame:
+    	values = pl.to_datetime(df[column], errors="raise").dt.normalize()
+    	return ConversionProcessor._assign(df, column, values, replace, new_column_name)
+
+    @staticmethod
+    def datetime(
+		df: pl.DataFrame,
+		column: str,
+		replace: bool = True,
+		new_column_name: str | None = None,
+	) -> pl.DataFrame:
+    	values = pl.to_datetime(df[column], errors="raise")
+    	return ConversionProcessor._assign(df, column, values, replace, new_column_name)
+
+    @staticmethod
+    def to_float(
+		df: pl.DataFrame,
+		column: str,
+		replace: bool = True,
+		new_column_name: str | None = None,
+	) -> pl.DataFrame:
+    	values = pl.to_numeric(df[column], errors="raise").astype("float64")
+    	return ConversionProcessor._assign(df, column, values, replace, new_column_name)
+
+    @staticmethod
+    def to_int(
+		df: pl.DataFrame,
+		column: str,
+		replace: bool = True,
+		new_column_name: str | None = None,
+	) -> pl.DataFrame:
+    	values = pl.to_numeric(df[column], errors="raise").astype("Int64")
+    	return ConversionProcessor._assign(df, column, values, replace, new_column_name)
+
+    @staticmethod
+    def to_str(
+		df: pl.DataFrame,
+		column: str,
+		replace: bool = True,
+		new_column_name: str | None = None,
+	) -> pl.DataFrame:
+    	values = df[column].astype("string")
+    	return ConversionProcessor._assign(df, column, values, replace, new_column_name)
 
     def make_date(
         self,

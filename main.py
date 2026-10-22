@@ -7,7 +7,7 @@ from typing import Any
 
 import polars as pl
 
-from polar_library.engine.core.dag_cleaner import merge_pipeline_clean
+from polar_library.engine.core.pipeline_clean import merge_pipeline_clean
 from polar_library.engine.core.pipeline_runner import PipelineRunner
 
 

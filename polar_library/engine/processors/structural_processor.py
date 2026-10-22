@@ -184,7 +184,7 @@ class StructuralProcessor:
         if not aggregations:
             raise ValueError("aggregations must not be empty")
 
-        # Convertir diccionario de agregaciones Pandas a Expresiones nativas de Polars
+        # Convertir diccionario de agregaciones Polar a Expresiones nativas de Polars
         pl_aggs = []
         for col, agg_funcs in aggregations.items():
             funcs = [agg_funcs] if isinstance(agg_funcs, str) else agg_funcs

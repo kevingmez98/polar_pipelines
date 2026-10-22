@@ -33,7 +33,7 @@
             "operation": {"name": "sort"},
             "input_ports": [{"id": "sort_sales_in", "ordinal": 0}],
             "output_ports": [{"id": "sort_sales_out", "ordinal": 0}],
-            "parameters": {"column": "Sales_south", "direction": "desc"}
+            "parameters": {"column": "Sales", "direction": "desc"}
         },
         {
             "id": "drop_discount",
@@ -47,14 +47,14 @@
             "operation": {"name": "rename-column"},
             "input_ports": [{"id": "rename_profit_in", "ordinal": 0}],
             "output_ports": [{"id": "rename_profit_out", "ordinal": 0}],
-            "parameters": {"column": "Profit_south", "new_name": "Profit Margin"}
+            "parameters": {"column": "Profit", "new_name": "Profit Margin"}
         },
         {
             "id": "type_postal_code",
             "operation": {"name": "change-data-type"},
             "input_ports": [{"id": "type_postal_code_in", "ordinal": 0}],
             "output_ports": [{"id": "type_postal_code_out", "ordinal": 0}],
-            "parameters": {"column": "Postal Code_south", "new_type": "string"}
+            "parameters": {"column": "Postal Code", "new_type": "string"}
         },
         {
             "id": "add_source",

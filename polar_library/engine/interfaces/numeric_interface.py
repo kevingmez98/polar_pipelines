@@ -82,7 +82,7 @@ class INumericProcessor(ABC):
         """ Creates a new column with the column's values powered to the power value """
 
     @abstractmethod
-    def round(
+    def round_column(
         self,
         df: pl.DataFrame,
         column_name: str,
@@ -91,3 +91,10 @@ class INumericProcessor(ABC):
         new_column_name: str | None = None,
     ) -> pl.DataFrame:
         """ Round the column data to a given number of decimals """
+    
+    @abstractmethod
+    def arithmetic(
+		df: pl.DataFrame, column_a: str, operator: str,
+		column_b_or_value: str | float, create_new_column: bool = False,
+		new_column_name: str | None = None,
+	) -> pl.DataFrame: ...

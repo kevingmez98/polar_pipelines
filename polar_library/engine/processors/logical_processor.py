@@ -21,36 +21,44 @@ def _parse_condition(
     df: pl.DataFrame,
     column: str,
     statement: str,
+    node_id: str | None = None,
 ) -> tuple[pl.Expr, str]:
+    context = f" for node {node_id!r}" if node_id is not None else ""
     if not isinstance(statement, str):
-        raise TypeError("Conditions must be strings in 'column operator value' format")
+        raise TypeError(f"Conditions must be strings in 'column operator value' format{context}")
 
     match = _CONDITION_PATTERN.fullmatch(statement.strip())
     if match is None:
-        raise ValueError("Condition must use 'column operator value' format")
+        raise ValueError(f"Condition must use 'column operator value' format{context}: {statement!r}")
 
-    if match.group("column").strip() != column:
-        raise ValueError(f"Condition column must match source column {column!r}")
+    stmt_column = match.group("column").strip()
+    if stmt_column != column:
+        raise ValueError(
+            f"Condition column must match source column {column!r} (got {stmt_column!r}){context}"
+        )
 
     operator = match.group("operator").lower()
     raw_value = (match.group("value") or "").strip()
 
     if operator == "isnull":
         if raw_value:
-            raise ValueError("The isnull condition does not accept a value")
+            raise ValueError(f"The isnull condition does not accept a value{context}")
         value = None
     else:
         if not raw_value:
-            raise ValueError("Condition value is required")
+            raise ValueError(f"Condition value is required{context}")
         try:
             value = json.loads(raw_value)
         except json.JSONDecodeError:
-            if re.fullmatch(r"[\w .-]+", raw_value) is None:
-                raise ValueError("Condition value must be a literal, not an expression")
-            value = raw_value
+            unquoted = raw_value.strip('"').strip("'")
+            if re.fullmatch(r"[\w .-]+", unquoted) is None:
+                raise ValueError(
+                    f"Condition value must be a literal, not an expression{context}: {raw_value!r}"
+                )
+            value = unquoted
 
         if not isinstance(value, (str, int, float, bool, type(None))):
-            raise ValueError("Condition value must be a scalar literal")
+            raise ValueError(f"Condition value must be a scalar literal{context}: {value!r}")
 
     return RowProcessor.condition_mask(pl.col(column), operator, value), operator
 

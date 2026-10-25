@@ -37,10 +37,10 @@ def _assign(
 def _integer_parts(df: pl.DataFrame, columns: tuple[str, ...]) -> dict[str, pl.Series]:
     parts = {}
     for name in columns:
-        values = pl.to_numeric(df[name], errors="raise")
-        if ((values.dropna() % 1) != 0).any():
+        values = df[name].cast(pl.Float64)
+        if ((values.drop_nulls() % 1) != 0).any():
             raise ValueError(f"{name} values must be integers")
-        parts[name] = values.astype("Int64")
+        parts[name] = values.cast(pl.Int64)
     return parts
 
 
@@ -50,7 +50,10 @@ def to_date(
     replace: bool = True,
     new_column_name: str | None = None,
 ) -> pl.DataFrame:
-    values = pl.to_datetime(df[column], errors="raise").dt.normalize()
+    if df[column].dtype == pl.String or df[column].dtype == pl.Utf8:
+        values = df[column].str.to_datetime(strict=True).dt.date()
+    else:
+        values = df[column].cast(pl.Date)
     return _assign(df, column, values, replace, new_column_name)
 
 
@@ -60,7 +63,10 @@ def datetime(
     replace: bool = True,
     new_column_name: str | None = None,
 ) -> pl.DataFrame:
-    values = pl.to_datetime(df[column], errors="raise")
+    if df[column].dtype == pl.String or df[column].dtype == pl.Utf8:
+        values = df[column].str.to_datetime(strict=True)
+    else:
+        values = df[column].cast(pl.Datetime)
     return _assign(df, column, values, replace, new_column_name)
 
 
@@ -70,7 +76,7 @@ def to_float(
     replace: bool = True,
     new_column_name: str | None = None,
 ) -> pl.DataFrame:
-    values = pl.to_numeric(df[column], errors="raise").astype("float64")
+    values = df[column].cast(pl.Float64)
     return _assign(df, column, values, replace, new_column_name)
 
 
@@ -80,7 +86,7 @@ def to_int(
     replace: bool = True,
     new_column_name: str | None = None,
 ) -> pl.DataFrame:
-    values = pl.to_numeric(df[column], errors="raise").astype("Int64")
+    values = df[column].cast(pl.Int64)
     return _assign(df, column, values, replace, new_column_name)
 
 
@@ -90,7 +96,7 @@ def to_str(
     replace: bool = True,
     new_column_name: str | None = None,
 ) -> pl.DataFrame:
-    values = df[column].astype("string")
+    values = df[column].cast(pl.String)
     return _assign(df, column, values, replace, new_column_name)
 
 
@@ -136,7 +142,11 @@ def make_date_time(
     new_column_name: str | None = None,
 ) -> pl.DataFrame:
 
-    # Nota: column_date: pl.Date/pl.Datetime  column_hour: pl.Time
-    expr = pl.col(column_date).dt.combine(pl.col(column_hour)).alias(new_column_name)
-
+    date_col = pl.col(column_date)
+    if date_col.dtype == pl.String or (hasattr(date_col, 'dtype') is False and df[column_date].dtype in (pl.String, pl.Utf8)):
+        date_col = pl.col(column_date).str.to_datetime()
+    else:
+        date_col = pl.col(column_date).cast(pl.Datetime)
+    hour_col = pl.col(column_hour)
+    expr = (date_col + hour_col.cast(pl.Duration("us"))).alias(new_column_name)
     return df.with_columns(expr)

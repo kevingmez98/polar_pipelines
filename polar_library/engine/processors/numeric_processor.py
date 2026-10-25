@@ -147,22 +147,22 @@ def arithmetic(
 		create_new_column: bool = False, new_column_name: str | None = None,
 	) -> pl.DataFrame:
 	
-        left = pl.to_numeric(df[column_a], errors="raise")
-        right = (
-			pl.to_numeric(df[column_b_or_value], errors="raise")
-			if isinstance(column_b_or_value, str) else column_b_or_value
-		)
-        if operator == "+":
-        	values = left.add(right)
-        elif operator == "-":
-        	values = left.sub(right)
-        elif operator == "*":
-        	values = left.mul(right)
-        elif operator == "/":
-        	zero_divisor = (right == 0).any() if isinstance(right, pl.Series) else right == 0
-        	if zero_divisor:
-        		raise ValueError("Division by zero")
-        	values = left.div(right)
-        else:
-        	raise ValueError(f"Unsupported arithmetic operator: {operator!r}")
-        return StructuralProcessor.assign_result(df, column_a, values, create_new_column, new_column_name)
+	left = pl.col(column_a).cast(pl.Float64)
+	if isinstance(column_b_or_value, str):
+		right = pl.col(column_b_or_value).cast(pl.Float64)
+	else:
+		right = pl.lit(column_b_or_value).cast(pl.Float64)
+	if operator == "+":
+		values = left + right
+	elif operator == "-":
+		values = left - right
+	elif operator == "*":
+		values = left * right
+	elif operator == "/":
+		if not isinstance(column_b_or_value, str):
+			if float(column_b_or_value) == 0:
+				raise ValueError("Division by zero")
+		values = left / right
+	else:
+		raise ValueError(f"Unsupported arithmetic operator: {operator!r}")
+	return StructuralProcessor.assign_result(df, column_a, values, create_new_column, new_column_name)

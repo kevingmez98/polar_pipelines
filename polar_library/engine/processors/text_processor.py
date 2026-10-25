@@ -145,7 +145,7 @@ def replace(
     df: pl.DataFrame,
     column_name: str,
     search_text: str,
-    create_new_column_field: str,
+    replace_with: str,
     create_new_column: bool = True,
     new_column_name: str | None = None,
 ) -> pl.DataFrame:
@@ -153,9 +153,7 @@ def replace(
     return df.with_columns(
         pl.col(column_name)
         .cast(pl.String)
-        .str.create_new_column_all(
-            pl.lit(search_text), pl.lit(create_new_column_field), literal=True
-        )
+        .str.replace_all(pl.lit(search_text), pl.lit(replace_with), literal=True)
         .alias(target_column)
     )
 

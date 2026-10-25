@@ -87,6 +87,96 @@ OPERATION_PROCESSORS: dict[str, Operation] = {
 	"concat_text": TextProcessor.concat_text,
 }
 
+PARAM_ALIASES: dict[str, dict[str, str]] = {
+	"and": {
+		"reemplazar_campo": "reemplazar_campo",
+		"nombre_nueva_columna": "nombre_nueva_columna",
+	},
+	"or": {
+		"reemplazar_campo": "reemplazar_campo",
+		"nombre_nueva_columna": "nombre_nueva_columna",
+	},
+	"if": {
+		"reemplazar_campo": "reemplazar_campo",
+		"nombre_nueva_columna": "nombre_nueva_columna",
+	},
+	"case": {
+		"reemplazar_campo": "reemplazar_campo",
+		"nombre_nueva_columna": "nombre_nueva_columna",
+	},
+	"elseif": {
+		"reemplazar_campo": "reemplazar_campo",
+		"nombre_nueva_columna": "nombre_nueva_columna",
+	},
+	"not": {
+		"reemplazar_campo": "reemplazar_campo",
+		"nombre_nueva_columna": "nombre_nueva_columna",
+	},
+	"absolute": {
+		"create_new_column": "create_new_column",
+		"new_column_name": "new_column_name",
+	},
+	"change_data_type": {
+		"target_type": "target_type",
+		"create_new_column": "create_new_column",
+		"new_column_name": "new_column_name",
+	},
+	"add_column": {
+		"column_name": "column_name",
+		"value": "value",
+	},
+	"concat": {
+		"create_new_column": "create_new_column",
+		"new_column_name": "new_column_name",
+	},
+	"lowercase": {
+		"create_new_column": "create_new_column",
+		"new_column_name": "new_column_name",
+	},
+	"extract_date_part": {
+		"create_new_column": "create_new_column",
+		"new_column_name": "new_column_name",
+	},
+	"drop_column": {
+		"columns": "columns",
+	},
+	"write_csv": {
+		"index": "index",
+	},
+	"read_csv": {
+		"filepath": "filepath",
+	},
+	"inner_join": {
+		"left_on": "left_on",
+		"right_on": "right_on",
+		"suffixes": "suffixes",
+	},
+	"join": {
+		"left_on": "left_on",
+		"right_on": "right_on",
+		"suffixes": "suffixes",
+	},
+	"outer_join": {
+		"left_on": "left_on",
+		"right_on": "right_on",
+		"suffixes": "suffixes",
+	},
+}
+
+
+def _normalize_params(operation: str, arguments: dict[str, Any]) -> dict[str, Any]:
+	aliases = PARAM_ALIASES.get(operation)
+	if not aliases:
+		return arguments
+	normalized = dict(arguments)
+	for source, target in aliases.items():
+		if source in normalized and target not in normalized:
+			normalized[target] = normalized[source]
+		elif source in normalized and target in normalized:
+			# keep target if both present
+			pass
+	return normalized
+
 _ZERO_INPUT_OPERATIONS = {"input", "read_csv", "read_xlsx"}
 _MULTI_INPUT_OPERATIONS = {"union"}
 _TWO_INPUT_OPERATIONS = {"join", "inner_join", "outer_join"}
@@ -110,6 +200,7 @@ def execute_operation(
 	function = get_operation(operation)
 	arguments = dict(parameters or {})
 	arguments.update(overrides)
+	arguments = _normalize_params(operation, arguments)
 	if operation in _ZERO_INPUT_OPERATIONS:
 		require_inputs(operation, inputs, 0)
 		return function(**arguments)
